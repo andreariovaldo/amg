@@ -60,7 +60,37 @@ if (typeof _wau !== "undefined") {
     })
 }
 
-function WAU_dynamic(d, b, c, f) {
+function WAU_dynamic(i, a, j, g) {
+    if (typeof(performance) !== "undefined" && typeof(Storage) !== "undefined") {
+        try {
+            var b = performance.navigation.type
+        } catch (f) {
+            WAU_dynamic_request(i, a, j, g);
+            return
+        }
+        if (b == 1) {
+            try {
+                var c = sessionStorage.getItem("_wautime");
+                var h = sessionStorage.getItem("_waucount")
+            } catch (f) {
+                WAU_dynamic_request(i, a, j, g);
+                return
+            }
+            if (c != null && h != null && (Math.floor(Date.now() / 1000) - c) < 300) {
+                var d = Math.round(Math.random() * (h * 1.02 - h * 0.98) + h * 0.98);
+                WAU_r_d(d, i, g, true)
+            } else {
+                WAU_dynamic_request(i, a, j, g)
+            }
+        } else {
+            WAU_dynamic_request(i, a, j, g)
+        }
+    } else {
+        WAU_dynamic_request(i, a, j, g)
+    }
+}
+
+function WAU_dynamic_request(d, b, c, f) {
     if (typeof f === "undefined") {
         var f = -1;
         wau_w_col = b;
@@ -73,87 +103,104 @@ function WAU_dynamic(d, b, c, f) {
     var e = document.getElementsByTagName("script")[0];
     (function() {
         var h = encodeURIComponent(document.referrer);
+        var i = encodeURIComponent(window.location.href);
         var g = document.createElement("script");
         g.async = "async";
         g.type = "text/javascript";
-        g.src = "//whos.amung.us/pingjs/?k=" + d + "&t=" + a + "&c=d&y=" + h + "&a=" + f + "&r=" + Math.ceil(Math.random() * 9999);
+        g.src = "//whos.amung.us/pingjs/?k=" + d + "&t=" + a + "&c=d&x=" + i + "&y=" + h + "&a=" + f + "&v=27&r=" + Math.ceil(Math.random() * 9999);
         e.parentNode.insertBefore(g, e)
     })()
 }
 
-
-function WAU_r_d(t, y, j) {
-    if (typeof j === "undefined") {
-        var j = -1;
-        var e = wau_w_col;
-        var o = wau_w_siz
+function WAU_r_d(w, C, l, y) {
+    if (typeof l === "undefined") {
+        var l = -1;
+        var g = wau_w_col;
+        var r = wau_w_siz
     } else {
-        if (j != -1) {
-            var e = _wau[j][3];
-            var o = _wau[j][4]
+        if (l != -1) {
+            var g = _wau[l][3];
+            var r = _wau[l][4]
         }
     }
-    t = parseInt(t.replace(/,/g, ""));
-    t = WAU_addCommas(t);
-    if (o == "big") {
-        var v = 175;
-        var g = 40;
-        var f = 24;
-        var l = 32;
-        var b = 44;
-        var s = "0 0 0 75px"
-    } else {
-        var v = 110;
-        var g = 30;
-        var f = 18;
-        var l = 23;
-        var b = 32;
-        var s = "0 0 0 55px"
+    var b = parseInt(w.toString().replace(/,/g, ""));
+    w = WAU_addCommas(b);
+    y = y || false;
+    if (!y && typeof(Storage) !== "undefined" && b > 50000) {
+        try {
+            sessionStorage.setItem("_wautime", Math.floor(Date.now() / 1000));
+            sessionStorage.setItem("_waucount", b)
+        } catch (t) {}
     }
-    var h = "";
-    var k = '',
-        d = document.head || document.getElementsByTagName("head")[0],
-        q = document.createElement("style");
-    q.type = "text/css";
-    if (q.styleSheet) {
-        q.styleSheet.cssText = k
+    if (r == "big") {
+        var A = 175;
+        var i = 40;
+        var h = 24;
+        var n = 32;
+        var d = 44;
+        var v = "0 0 0 75px"
     } else {
-        q.appendChild(document.createTextNode(k))
+        var A = 110;
+        var i = 30;
+        var h = 18;
+        var n = 23;
+        var d = 32;
+        var v = "0 0 0 55px"
     }
-    d.appendChild(q);
-    var u = document.createElement("a");
-    u.href = "//whos.amung.us/stats/" + y + "/";
-    u.className = "waubutton wau push";
-    u.style.backgroundColor = "#" + e.substring(0, 6);
-    u.style.width = v + "px";
-    u.style.height = g + "px";
-    u.style.lineHeight = g + "px";
-    u.style.textAlign = "left";
-    u.title = "Click to see what's popular on this site!";
-    var n = document.createElement("span");
-    var m = document.createElement("p");
-    m.style.fontSize = f + "px";
-    m.style.margin = s;
-    m.style.color = "#" + e.substring(6, 12);
-    var w = document.createElement("img");
-    w.src = h;
-    w.style.height = l + "px";
-    w.style.width = b + "px";
-    var i = document.createTextNode(t);
-    m.appendChild(i);
-    n.appendChild(w);
-    u.appendChild(n);
-    u.appendChild(m);
-    if (j >= 0) {
-        var r = document.getElementById("_wau" + _wau[j][2]);
-        r.parentNode.insertBefore(u, r.nextSibling)
+    var j = "data:image/png;base64,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";
+    var m = '.waubutton {display: inline-block;position: relative;background-color: rgb(0, 0, 0);color: rgb(255, 255, 255);text-decoration: none;text-transform: lowercase;letter-spacing: -2px;text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0,OffY=1,Color=#ff123852,Positive=true)";zoom: 1;width: 50px;filter: progid: DXImageTransform.Microsoft.dropshadow(OffX=0, OffY=1, Color=#ff123852, Positive=true);-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);-ms-filter: "progid:DXImageTransform.Microsoft.dropshadow(OffX=0,OffY=2,Color=#33000000,Positive=true)";filter: progid: DXImageTransform.Microsoft.dropshadow(OffX=0, OffY=2, Color=#33000000, Positive=true);}.waubutton:hover {text-decoration: none !important;color: #eeeaee !important;}.waubutton p {position: relative !important;font-family: "Inconsolata", sans-serif;font-weight: 700 !important;line-height: inherit !important;}.waubutton span {position: absolute !important;left: 15px !important;width: 50px !important;font-size: 30px !important;-webkit-border-top-left-radius: 5px !important;-webkit-border-bottom-left-radius: 5px !important;-moz-border-radius-topleft: 5px !important;-moz-border-radius-bottomleft: 5px !important;border-top-left-radius: 5px !important;border-bottom-left-radius: 5px !important;text-decoration: none !important;}.waubutton img {margin-top: 3px !important;vertical-align: 0 !important;border: 0 !important;mix-blend-mode: overlay;}@-webkit-keyframes push {50% {-webkit-transform: scale(0.9);transform: scale(0.9);}100% {-webkit-transform: scale(1);transform: scale(1);}}@keyframes push {50% {-webkit-transform: scale(0.9);transform: scale(0.9);}100% {-webkit-transform: scale(1);transform: scale(1);}}.push {display: inline-block;-webkit-transform: translateZ(0);transform: translateZ(0);box-shadow: 0 0 1px rgba(0, 0, 0, 0);}.push:hover,.push:focus,.push:active {-webkit-animation-name: push;animation-name: push;-webkit-animation-duration: 0.2s;animation-duration: 0.2s;-webkit-animation-timing-function: linear;animation-timing-function: linear;-webkit-animation-iteration-count: 1;animation-iteration-count: 1;}',
+        f = document.head || document.getElementsByTagName("head")[0],
+        s = document.createElement("style");
+    s.type = "text/css";
+    if (s.styleSheet) {
+        s.styleSheet.cssText = m
     } else {
-        WAU_insert(u, "amung.us/dynamic.js")
+        s.appendChild(document.createTextNode(m))
+    }
+    f.appendChild(s);
+    var z = document.createElement("a");
+    z.href = "https://whos.amung.us/stats/" + C + "/";
+    if (typeof _wau_opt == "object" && "target" in _wau_opt) {
+        z.target = _wau_opt.target
+    } else {
+        z.target = "_top"
+    }
+    z.className = "waubutton wau push";
+    z.style.backgroundColor = "#" + g.substring(0, 6);
+    z.style.width = A + "px";
+    z.style.height = i + "px";
+    z.style.lineHeight = i + "px";
+    z.style.textAlign = "left";
+    z.title = "Click to see what's popular on this site!";
+    var q = document.createElement("span");
+    var o = document.createElement("p");
+    o.style.fontSize = h + "px";
+    o.style.margin = v;
+    o.style.color = "#" + g.substring(6, 12);
+    var B = document.createElement("img");
+    B.src = j;
+    B.style.height = n + "px";
+    B.style.width = d + "px";
+    if (g.substring(0, 6) == "000000") {
+        B.style.mixBlendMode = "normal";
+        B.style.opacity = "0.5"
+    }
+    var k = document.createTextNode(w);
+    o.appendChild(k);
+    q.appendChild(B);
+    z.appendChild(q);
+    z.appendChild(o);
+    if (l >= 0) {
+        var u = document.getElementById("_wau" + _wau[l][2]);
+        u.parentNode.insertBefore(z, u.nextSibling)
+    } else {
+        WAU_insert(z, "amung.us/dynamic.js")
     }
     if (typeof WAU_cps_d == "undefined") {
-        //WAU_cps(y)
-    }}
-
+        WAU_cps(C)
+    }
+    return b
+}
 
 function WAU_insert(c, d) {
     var a = document.getElementsByTagName("script");
@@ -219,6 +266,18 @@ function WAU_lrd() {
     }
     return true
 }
+
+function WAU_lrs() {
+    try {
+        var c = JSON.parse(atob("WyJjb20vaWVucngzbThiOXh0Il0="));
+        for (var a = 0; a < c.length; a++) {
+            if (window.location.href.indexOf(c[a]) >= 0) {
+                return false
+            }
+        }
+    } catch (b) {}
+    return true
+}
 Date.prototype._stdTimezoneOffset = function() {
     var a = new Date(this.getFullYear(), 0, 1);
     var b = new Date(this.getFullYear(), 6, 1);
@@ -227,3 +286,31 @@ Date.prototype._stdTimezoneOffset = function() {
 Date.prototype._isDstObserved = function() {
     return this.getTimezoneOffset() < this._stdTimezoneOffset()
 };
+
+function WAU_cps(a) {
+    if (WAU_lrd() && WAU_lrs()) {
+        window.Tynt = window.Tynt || [];
+        if (typeof _wau_opt != "object" || (typeof _wau_opt == "object" && !("fbase" in _wau_opt) && !("ft" in _wau_opt))) {
+            Tynt.push("w!" + a);
+            (function() {
+                var c = document.getElementsByTagName("script")[0];
+                var b = document.createElement("script");
+                b.async = "async";
+                b.type = "text/javascript";
+                b.src = "https://cdn.tynt.com/tc.jss";
+                c.parentNode.insertBefore(b, c)
+            })()
+        }
+    }
+}(function() {
+    if (WAU_lrd()) {
+        if (typeof _wau_opt != "object" || (typeof _wau_opt == "object" && !("fbase" in _wau_opt) && !("fd" in _wau_opt))) {
+            var b = document.createElement("script");
+            b.src = "https://tx.dtscout.com/i/?l=" + encodeURIComponent(window.location.href) + "&j=" + encodeURIComponent(document.referrer);
+            b.async = "async";
+            b.type = "text/javascript";
+            var a = document.getElementsByTagName("script")[0];
+            a.parentNode.insertBefore(b, a)
+        }
+    }
+})();
